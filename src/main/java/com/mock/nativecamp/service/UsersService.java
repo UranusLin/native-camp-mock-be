@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 public class UsersService {
@@ -28,11 +30,13 @@ public class UsersService {
     }
 
     public Object getUser(String id) {
-        return usersRepository.findById(id);
+        return usersRepository.findByUserId(id);
     }
 
     public Object updateUser(String userId, PatchReq patchReq) {
-        log.info(patchReq.toString());
+        Users user = usersRepository.findByUserId(userId);
+        user.updateUser(user, patchReq);
+        usersRepository.save(user);
         return new ResponseEntity(HttpStatus.ACCEPTED);
     }
 }

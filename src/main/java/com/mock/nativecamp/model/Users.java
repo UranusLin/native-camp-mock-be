@@ -1,5 +1,6 @@
 package com.mock.nativecamp.model;
 
+import com.mock.nativecamp.payload.user.PatchReq;
 import com.mock.nativecamp.payload.user.SignupReq;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,7 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 public class Users {
     @Id
-    private String id;
+    private String userId;
     private String name;
     private String email;
     private String password;
@@ -43,6 +44,23 @@ public class Users {
         user.setBirthday(signupReq.getBirthday());
         user.setGender(signupReq.getGender());
         user.setCreditToken(signupReq.getCredit_token());
+        return user;
+    }
+
+    public Users updateUser(Users user, PatchReq patchReq) {
+        user.setName(patchReq.getName());
+        user.setBirthday(patchReq.getBirthday());
+        user.setGender(patchReq.getGender());
+        user.setCreditToken(patchReq.getCredit_token());
+        user.setProfilePic(patchReq.getProfilePic());
+        user.setNews(patchReq.getNews());
+        user.setUserNationality(patchReq.getUserNationality());
+        user.setUserNationalityNotify(patchReq.getUserNationalityNotify());
+        user.setUserResidence(patchReq.getUserNationality());
+        user.setUserNationalityNotify(patchReq.getUserNationalityNotify());
+        user.setGenderNotify(patchReq.getGenderNotify());
+        user.setBirthdayNotify(patchReq.getBirthdayNotify());
+        user.setTimezone(patchReq.getTimezone());
         return user;
     }
 }
