@@ -1,6 +1,8 @@
 package com.mock.nativecamp.service;
 
 import com.mock.nativecamp.model.Users;
+import com.mock.nativecamp.payload.CommonResponse;
+import com.mock.nativecamp.payload.sub.ResData;
 import com.mock.nativecamp.payload.user.PatchReq;
 import com.mock.nativecamp.payload.user.SignupReq;
 import com.mock.nativecamp.repository.UsersRepository;
@@ -10,6 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -19,24 +24,49 @@ public class UsersService {
     @Autowired
     private UsersRepository usersRepository;
 
-    public Object signupUser(SignupReq signupReq) {
+    public CommonResponse signupUser(SignupReq signupReq) {
         Users user = new Users().signUser(signupReq);
         usersRepository.save(user);
-        return new ResponseEntity(HttpStatus.ACCEPTED);
+        CommonResponse commonResponse = new CommonResponse().successRes();
+        ResData resData = new ResData();
+        resData.setData(user);
+        commonResponse.setData(resData);
+        return commonResponse;
     }
 
-    public Object getAllUsers() {
-        return usersRepository.findAll();
+    public CommonResponse getAllUsers() {
+        List<Users> users = usersRepository.findAll();
+        CommonResponse commonResponse = new CommonResponse().successRes();
+        ResData resData = new ResData();
+        resData.setData(users);
+        commonResponse.setData(resData);
+        return commonResponse;
     }
 
-    public Object getUser(String id) {
-        return usersRepository.findByUserId(id);
+    public CommonResponse getUser(String id) {
+        Users user = usersRepository.findByUserId(id);
+        CommonResponse commonResponse = new CommonResponse().successRes();
+        if (user == null) {
+            commonResponse = commonResponse.errorRes("user id not found", "404");
+        }
+        ResData resData = new ResData();
+        resData.setData(user);
+        commonResponse.setData(resData);
+        return commonResponse;
     }
 
-    public Object updateUser(String userId, PatchReq patchReq) {
+    public CommonResponse updateUser(String userId, PatchReq patchReq) {
         Users user = usersRepository.findByUserId(userId);
-        user.updateUser(user, patchReq);
-        usersRepository.save(user);
-        return new ResponseEntity(HttpStatus.ACCEPTED);
+        CommonResponse commonResponse = new CommonResponse().successRes();
+        if (user == null) {
+            commonResponse = new CommonResponse().errorRes("user id not found", "404");
+        } else {
+            user.updateUser(user, patchReq);
+            usersRepository.save(user);
+        }
+        ResData resData = new ResData();
+        resData.setData(user);
+        commonResponse.setData(resData);
+        return commonResponse;
     }
 }
